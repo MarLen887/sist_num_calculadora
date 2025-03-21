@@ -2,8 +2,10 @@
 <html lang="es">
     <!-- Encabezado -->
 <head>
+    <!-- Metadatos -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Título de la pestañada del navegador -->
     <title>Calculadora</title>
     <!-- Links de estilos -->
     <link rel="stylesheet" href="style.css">
@@ -12,14 +14,14 @@
     <!-- Link para iconos / Dependencia de bootstrap -->
     <link rel="stylesheet" href="node_modules/bootstrap-icons/font/bootstrap-icons.css">
 
-    <!-- Logo en el nombre de página -->
+    <!-- Logo en el nombre de la pestañada -->
     <link rel="icon" type="image/png" href="img/logo.png">
 
 </head>
 
 <!-- Cuerpo de la página -->
 <body class="bg-light">
-<!-- Colocar contenedores principales para que la intefaz sea responsiva -->
+<!-- Colocar contenedores principales para que la interfaz sea responsiva -->
 <div class="container-xl mt-5">
     <div class="row justify-content-center">
         <div class="col-lg-6 col-md-8 col-sm-10 col-12">
@@ -28,6 +30,7 @@
                     <h3>Calculadora de conversión</h3>
                 </div>
                 <div class="card-body">
+                    <!-- Requerimientos del usuario -->
                     <form id="conversionForm">
                         <div class="mb-3 text-center">
                             <label class="form-label">Selecciona el sistema de origen</label>
@@ -51,7 +54,7 @@
 
                         <input type="hidden" id="selectedSystem" value="">
                         <input type="hidden" id="selectedTarget" value="">
-
+                        
                         <div class="mb-3">
                             <label for="numberInput" class="form-label">Número a convertir</label>
                             <input type="text" class="form-control" id="numberInput" placeholder="Ingrese el número">
@@ -76,7 +79,7 @@
     </div>
 </div>
 
-    <!-- Referencias para el funcionamiento de los botones -->
+    <!-- Referencias para el funcionamiento de la aplicación-->
     <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="back.js"></script>
 </body>

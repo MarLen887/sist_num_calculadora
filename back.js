@@ -1,12 +1,17 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const systemButtons = document.querySelectorAll(".system-btn");
-    const targetButtons = document.querySelectorAll(".target-btn");
-    const selectedSystemInput = document.getElementById("selectedSystem");
-    const selectedTargetInput = document.getElementById("selectedTarget");
-    const form = document.getElementById("conversionForm");
-    const resultElement = document.getElementById("result");
-    const procedureElement = document.getElementById("procedure");
+//Lógica de conversión
 
+//Para que los elementos estén disponibles para interactuar entre ellos
+document.addEventListener("DOMContentLoaded", () => {
+    //Componentes que se utilizan
+    const systemButtons = document.querySelectorAll(".system-btn"); //Origen
+    const targetButtons = document.querySelectorAll(".target-btn"); //Destino
+    const selectedSystemInput = document.getElementById("selectedSystem"); //Campo oculto, que elige el usuario: conversión origen
+    const selectedTargetInput = document.getElementById("selectedTarget"); //Campo oculto, que elige el usuario: conversión destino
+    const form = document.getElementById("conversionForm"); //Formulario que recibe los datos
+    const resultElement = document.getElementById("result"); //Muestra el resultado
+    const procedureElement = document.getElementById("procedure"); //Muestra el procedimiento
+
+    //Para marcar los botones seleccionados por el usuario, como "activo"
     function selectButton(buttons, selectedValue, inputField) {
         buttons.forEach(btn => {
             if (btn.dataset.system === selectedValue || btn.dataset.target === selectedValue) {
@@ -18,6 +23,8 @@ document.addEventListener("DOMContentLoaded", () => {
         inputField.value = selectedValue;
     }
 
+    // Eventos en los botones de sistema de origen y destino, para cada vez que se haga click en estos
+    //Y así actualizar los campos ocultos 
     systemButtons.forEach(button => {
         button.addEventListener("click", () => {
             selectButton(systemButtons, button.dataset.system, selectedSystemInput);
@@ -30,23 +37,29 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    //Validaciones y qué va a hacer el botón "convertir"
     form.addEventListener("submit", (e) => {
         e.preventDefault();
 
         const system = selectedSystemInput.value;
         const target = selectedTargetInput.value;
         const number = document.getElementById("numberInput").value.trim();
+        
+        // Limpiar cualquier clase previamente asignada
+        resultElement.classList.remove("text-success", "text-danger");
+        procedureElement.textContent = "";
 
+        // Si el usuario no selecciona un sistema de origen y/o de destino, aparecerá una alerta
         if (!system || !target) {
             alert("Por favor, selecciona un sistema de origen y destino.");
             return;
         }
-
+        //Si el usuario no agrega un número que esté dentro de los sistemas propuestos, aparecerá una alerta
         if (number === "") {
             alert("Por favor, ingresa un número válido.");
             return;
         }
-
+        //Si pasa las dos condiciones mencionadas, se muestra el resultado y procedimiento propuesto
         let result, procedure;
         try {
             ({ result, procedure } = convertNumber(system, target, number));
@@ -60,10 +73,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    //Hacer la conversión entre sistemas numéricos
     function convertNumber(system, target, value) {
         let decimalValue;
         let procedure = "";
+        
+        // Verificación para que el sistema octal no tome en cuenta letras
+        if (system === "octal" && /[^0-7]/.test(value)) {
+            throw new Error("Número inválido. El sistema octal solo puede contener los dígitos del 0 al 7.");
+        }
 
+        //Casos dependiendo de la conversión que se quiera
+        //Cada caso cuenta con la base correspondiente
         switch (system) {
             case "decimal":
                 decimalValue = parseInt(value, 10);
@@ -77,6 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
             case "hexadecimal":
                 decimalValue = parseInt(value, 16);
                 break;
+            // Si no es válido debe de enviar un error
             default:
                 throw new Error("Sistema no válido.");
         }
@@ -84,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (isNaN(decimalValue)) {
             throw new Error("Número inválido.");
         }
-
+        //Devolver el resultado más una leyenda con el procedimiento que se debe hacer para llegar al resultado
         switch (`${system}-${target}`) {
             case "decimal-binary":
                 procedure = "Procedimiento: Se divide entre 2 y se toman los residuos.";
@@ -133,7 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
             case "hexadecimal-octal":
                 procedure = "Procedimiento:\n1. Cada dígito hexadecimal se convierte a su equivalente binario de 4 bits.\n2. Se unen todos los grupos de 4 bits en el mismo orden.\n3. Se agrupan los bits binarios en grupos de 3, comenzando desde la derecha.\n4. Cada grupo de 3 bits se convierte a su equivalente octal.";
                 return { result: decimalValue.toString(8), procedure };
-
+            // Si la conversión no es posible, dará un error (alerta)    
             default:
                 throw new Error("Conversión no válida.");
         }
